@@ -1,0 +1,43 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// model User {
+//   id         String      @id
+//   name       String
+//   email      String      @unique
+//   picture    String?
+//   portfolios Portfolio[]
+// }
+
+model Portfolio {
+  id     Int     @id @default(autoincrement())
+  userId String
+  name   String
+  // user   User    @relation(fields: [userId], references: [id])
+  stocks Stock[]
+}
+
+model Stock {
+  id                 Int              @id @default(autoincrement())
+  quantity           Int
+  buyPrice           Float
+  portfolioId        Int
+  centralizedStockId Int
+  portfolio          Portfolio        @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+  centralizedStock   CentralizedStock @relation(fields: [centralizedStockId], references: [id])
+
+  @@unique([portfolioId, centralizedStockId])
+}
+
+model CentralizedStock {
+  id     Int     @id @default(autoincrement())
+  name   String
+  ticker String
+  stocks Stock[] // Relation to stocks in portfolios
+}
