@@ -44,8 +44,6 @@ export const portfolioRoute = new Hono()
     const user = c.var.user;
     try {
       const data_received = c.req.valid("json");
-      console.log(data_received);
-
       const newPortfolio = await prisma.portfolio.create({
         data: {
           userId: user.id,

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Main } from '@/components/ui/main'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { StockEnum } from '@/lib/centralstrocks'
 import { Button } from '@/components/ui/button'
 import { api } from '@/lib/api'
@@ -21,6 +21,7 @@ import { DualRangeSlider } from '@/components/ui/rangeslider'
 import { SellSheet } from '@/components/custom/sellSheel'
 // import StockPrices from '@/components/custom/stock-price-dummy'
 import { Separator } from '@/components/ui/separator'
+import StockPrices from '@/components/custom/stock-price-dummy'
 
 // Extend FileRoutesByPath to include your dynamic route
 declare module '@tanstack/react-router' {
@@ -31,13 +32,13 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface Stock {
-  id: number
-  quantity: number
-  buyPrice: number
-  portfolioId: number
-  centralizedStockId: number
-}
+// interface Stock {
+//   id: number
+//   quantity: number
+//   buyPrice: number
+//   portfolioId: number
+//   centralizedStockId: number
+// }
 
 // Define the route
 export const Route = createFileRoute('/portfolio/$portfolioId')({
@@ -95,9 +96,9 @@ function PortfolioRouteComponent() {
     portfolioValue: number
   }
 
-  const [portfolioData, setPortfolioData] = useState<Portfolio | null>(null)
+  // const [portfolioData, setPortfolioData] = useState<Portfolio | null>(null)
 
-  const { data, error, isLoading } = useQuery<Portfolio>(
+  const { data } = useQuery<Portfolio>(
     ['stocks', portfolioId],
     async () => {
       const response = await fetch(`/api/portfolio/${portfolioId}`)
@@ -116,11 +117,11 @@ function PortfolioRouteComponent() {
     },
   )
 
-  useEffect(() => {
-    if (data) {
-      setPortfolioData(data) // Update state with fetched data
-    }
-  }, [data]) // Only run when `data` changes
+  // useEffect(() => {
+  //   if (data) {
+  //     setPortfolioData(data) // Update state with fetched data
+  //   }
+  // }, [data]) // Only run when `data` changes
 
   const [values, setValues] = useState([10])
 
@@ -268,7 +269,7 @@ function PortfolioRouteComponent() {
             <Stocks portfolioId={Number(portfolioId)} />
           </TabsContent> */}
         </Tabs>
-        {/* <StockPrices id={Number(portfolioId)} /> */}
+        <StockPrices id={Number(portfolioId)} />
       </Main>
     </>
   )
