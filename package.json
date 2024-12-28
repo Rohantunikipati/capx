@@ -6,8 +6,10 @@
     "@types/bun": "latest"
   },
   "scripts": {
-    "start": "bun server/index.ts",
-    "dev": "bun --watch server/index.ts"
+    "start": "node dist/index.js",
+    "dev": "bun --watch server/index.ts",
+    "build": "tsc && cd Frontend && bun install && bun run build",
+    "build:watch": "tsc --watch"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

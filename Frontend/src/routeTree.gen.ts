@@ -11,20 +11,14 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as AboutImport } from './routes/about'
 import { Route as AuthenticationImport } from './routes/_authentication'
 import { Route as IndexImport } from './routes/index'
 import { Route as PortfolioIndexImport } from './routes/portfolio/index'
 import { Route as PortfolioPortfolioIdImport } from './routes/portfolio/$portfolioId'
 import { Route as AuthenticationProfileImport } from './routes/_authentication/profile'
+import { Route as AuthenticationAboutImport } from './routes/_authentication/about'
 
 // Create/Update Routes
-
-const AboutRoute = AboutImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AuthenticationRoute = AuthenticationImport.update({
   id: '/_authentication',
@@ -55,6 +49,12 @@ const AuthenticationProfileRoute = AuthenticationProfileImport.update({
   getParentRoute: () => AuthenticationRoute,
 } as any)
 
+const AuthenticationAboutRoute = AuthenticationAboutImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AuthenticationRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -73,12 +73,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticationImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
+    '/_authentication/about': {
+      id: '/_authentication/about'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof AboutImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticationAboutImport
+      parentRoute: typeof AuthenticationImport
     }
     '/_authentication/profile': {
       id: '/_authentication/profile'
@@ -107,10 +107,12 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticationRouteChildren {
+  AuthenticationAboutRoute: typeof AuthenticationAboutRoute
   AuthenticationProfileRoute: typeof AuthenticationProfileRoute
 }
 
 const AuthenticationRouteChildren: AuthenticationRouteChildren = {
+  AuthenticationAboutRoute: AuthenticationAboutRoute,
   AuthenticationProfileRoute: AuthenticationProfileRoute,
 }
 
@@ -121,7 +123,7 @@ const AuthenticationRouteWithChildren = AuthenticationRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticationRouteWithChildren
-  '/about': typeof AboutRoute
+  '/about': typeof AuthenticationAboutRoute
   '/profile': typeof AuthenticationProfileRoute
   '/portfolio/$portfolioId': typeof PortfolioPortfolioIdRoute
   '/portfolio': typeof PortfolioIndexRoute
@@ -130,7 +132,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthenticationRouteWithChildren
-  '/about': typeof AboutRoute
+  '/about': typeof AuthenticationAboutRoute
   '/profile': typeof AuthenticationProfileRoute
   '/portfolio/$portfolioId': typeof PortfolioPortfolioIdRoute
   '/portfolio': typeof PortfolioIndexRoute
@@ -140,7 +142,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_authentication': typeof AuthenticationRouteWithChildren
-  '/about': typeof AboutRoute
+  '/_authentication/about': typeof AuthenticationAboutRoute
   '/_authentication/profile': typeof AuthenticationProfileRoute
   '/portfolio/$portfolioId': typeof PortfolioPortfolioIdRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -167,7 +169,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authentication'
-    | '/about'
+    | '/_authentication/about'
     | '/_authentication/profile'
     | '/portfolio/$portfolioId'
     | '/portfolio/'
@@ -177,7 +179,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticationRoute: typeof AuthenticationRouteWithChildren
-  AboutRoute: typeof AboutRoute
   PortfolioPortfolioIdRoute: typeof PortfolioPortfolioIdRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
@@ -185,7 +186,6 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticationRoute: AuthenticationRouteWithChildren,
-  AboutRoute: AboutRoute,
   PortfolioPortfolioIdRoute: PortfolioPortfolioIdRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,
 }
@@ -202,7 +202,6 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_authentication",
-        "/about",
         "/portfolio/$portfolioId",
         "/portfolio/"
       ]
@@ -213,11 +212,13 @@ export const routeTree = rootRoute
     "/_authentication": {
       "filePath": "_authentication.tsx",
       "children": [
+        "/_authentication/about",
         "/_authentication/profile"
       ]
     },
-    "/about": {
-      "filePath": "about.tsx"
+    "/_authentication/about": {
+      "filePath": "_authentication/about.tsx",
+      "parent": "/_authentication"
     },
     "/_authentication/profile": {
       "filePath": "_authentication/profile.tsx",
